@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: logging-service
+    
+  datasource:
+    url: jdbc:mysql://localhost:3306/logging_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        
+server:
+  port: 8083
+
+# RocketMQ配置
+rocketmq:
+  name-server: localhost:9876
+  consumer:
+    group: logging-service-group
+    consume-thread-min: 1
+    consume-thread-max: 20
+
+# 日志配置
+logging:
+  level:
+    com.logging: INFO
+    org.apache.rocketmq: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
