@@ -91,7 +91,7 @@ src/
 │   └── exception/         # 异常处理
 ├── main/resources/
 │   ├── application.yml    # 应用配置
-│   └── db/init-schema.sql # 数据库脚本
+│   └── db/init-logging-service.sql # 数据库脚本
 └── test/                  # 测试代码
 ```
 
