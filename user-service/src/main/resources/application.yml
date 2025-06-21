@@ -9,6 +9,8 @@ spring:
   
   # 数据源配置 - 使用ShardingSphere进行分库分表
   shardingsphere:
+    mode:
+      type: Memory  # 使用内存模式，简化配置
     datasource:
       names: ds0,ds1
       ds0:
@@ -33,12 +35,12 @@ spring:
             table-strategy:
               standard:
                 sharding-column: user_id
-                sharding-algorithm-name: user-table-inline
+                sharding-algorithm-name: user-inline
             key-generate-strategy:
               column: user_id
               key-generator-name: snowflake
         sharding-algorithms:
-          user-table-inline:
+          user-inline:
             type: INLINE
             props:
               algorithm-expression: ds$->{user_id % 2}
@@ -49,6 +51,7 @@ spring:
     # 显示SQL
     props:
       sql-show: true
+      sql-simple: true
 
   # JPA配置
   jpa:
@@ -77,6 +80,8 @@ rocketmq:
 
 # Seata分布式事务配置
 seata:
+  enabled: true
+  enable-auto-data-source-proxy: false  
   tx-service-group: user_service_group
   service:
     vgroup-mapping:
@@ -90,7 +95,7 @@ seata:
 
 # JWT配置
 jwt:
-  secret: mySecretKey123456789abcdefghijklmnopqrstuvwxyz
+  secret: mySecretKey123456789abcdefghijklmnopqrstuvwxyz  # 请替换为更安全的密钥
   expiration: 86400000  # 24小时，单位毫秒
 
 # 日志配置

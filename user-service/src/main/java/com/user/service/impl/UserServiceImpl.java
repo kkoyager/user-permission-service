@@ -303,10 +303,8 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
 
             // 5. 发送密码重置日志到MQ
-            messageUtil.sendPasswordResetLog(userId, clientIp);
-
-            logger.info("用户密码重置成功: userId={}", userId);
-            return ApiResponse.success("密码重置成功");
+            messageUtil.sendPasswordResetLog(userId, clientIp);            logger.info("用户密码重置成功: userId={}", userId);
+            return ApiResponse.success("密码重置成功", "密码重置成功");
 
         } catch (Exception e) {
             logger.error("重置用户密码失败: userId={}, error={}", userId, e.getMessage(), e);

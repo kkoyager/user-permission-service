@@ -151,15 +151,13 @@ public class UserController {
         logger.info("获取用户角色: userId={}, role={}", currentUserId, role);
         
         return ApiResponse.success("获取角色成功", role);
-    }
-
-    /**
+    }    /**
      * 健康检查接口
      * GET /user/health
      */
     @GetMapping("/health")
     public ApiResponse<String> health() {
-        return ApiResponse.success("用户服务运行正常");
+        return ApiResponse.success("用户服务运行正常", "用户服务运行正常");
     }
 
     /**

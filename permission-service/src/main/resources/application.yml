@@ -29,3 +29,8 @@ spring:
         
 server:
   port: 8082
+
+# JWT配置 (与user-service保持一致)
+jwt:
+  secret: mySecretKey123456789abcdefghijklmnopqrstuvwxyz  # 与user-service相同的密钥
+  expiration: 86400000  # 24小时，单位毫秒
