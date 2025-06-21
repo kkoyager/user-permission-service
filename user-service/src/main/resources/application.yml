@@ -1,0 +1,102 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: user-service
+  
+  # 数据源配置 - 使用ShardingSphere进行分库分表
+  shardingsphere:
+    datasource:
+      names: ds0,ds1
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/user_db_0?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+        username: root
+        password: 123456
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/user_db_1?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+        username: root
+        password: 123456
+    
+    # 分片规则配置
+    rules:
+      sharding:
+        tables:
+          users:
+            actual-data-nodes: ds$->{0..1}.users
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: user-table-inline
+            key-generate-strategy:
+              column: user_id
+              key-generator-name: snowflake
+        sharding-algorithms:
+          user-table-inline:
+            type: INLINE
+            props:
+              algorithm-expression: ds$->{user_id % 2}
+        key-generators:
+          snowflake:
+            type: SNOWFLAKE
+    
+    # 显示SQL
+    props:
+      sql-show: true
+
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+  # Nacos注册中心配置
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: public
+        group: DEFAULT_GROUP
+
+# RocketMQ配置
+rocketmq:
+  name-server: localhost:9876
+  producer:
+    group: user-service-producer
+    send-message-timeout: 3000
+
+# Seata分布式事务配置
+seata:
+  tx-service-group: user_service_group
+  service:
+    vgroup-mapping:
+      user_service_group: default
+  registry:
+    type: nacos
+    nacos:
+      server-addr: localhost:8848
+      group: SEATA_GROUP
+      namespace: public
+
+# JWT配置
+jwt:
+  secret: mySecretKey123456789abcdefghijklmnopqrstuvwxyz
+  expiration: 86400000  # 24小时，单位毫秒
+
+# 日志配置
+logging:
+  level:
+    com.user: DEBUG
+    org.apache.shardingsphere: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger{50}] - %msg%n"
